@@ -1,5 +1,7 @@
 import requests
 
+from database import get_connection, create_table, save_prices, count_rows
+
 API_URL = "https://api.coingecko.com/api/v3/simple/price"
 COINS = ["bitcoin", "ethereum", "solana"]
 CURRENCY = "gbp"
@@ -23,6 +25,14 @@ def show_prices(prices):
 def main():
     prices = fetch_prices(COINS, CURRENCY)
     show_prices(prices)
+
+    conn = get_connection()
+    try:
+        create_table(conn)
+        save_prices(conn, prices, CURRENCY)
+        print(f"Saved to database. Total records: {count_rows(conn)}")
+    finally:
+        conn.close()
 
 
 if __name__ == "__main__":
