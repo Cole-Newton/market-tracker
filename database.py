@@ -39,3 +39,18 @@ def save_prices(conn, prices, currency):
 def count_rows(conn):
     """Return how many price records are stored."""
     return conn.execute("SELECT COUNT(*) FROM prices").fetchone()[0]
+
+
+def get_summary(conn):
+    """Return each coin's number of readings, lowest, highest and average price."""
+    query = """
+        SELECT coin,
+               COUNT(*) AS readings,
+               MIN(price) AS lowest,
+               MAX(price) AS highest,
+               ROUND(AVG(price), 2) AS average
+        FROM prices
+        GROUP BY coin
+        ORDER BY coin
+    """
+    return conn.execute(query).fetchall()
